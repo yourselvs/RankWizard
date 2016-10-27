@@ -1,11 +1,6 @@
 package yourselvs.rankwizard.database.interfaces;
 
 import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-
-import org.bukkit.entity.Player;
-
 import yourselvs.rankwizard.Rank;
 import yourselvs.rankwizard.RankClass;
 import yourselvs.rankwizard.RankPlayer;
