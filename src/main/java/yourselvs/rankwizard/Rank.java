@@ -3,8 +3,6 @@ package yourselvs.rankwizard;
 import java.util.HashSet;
 import java.util.Set;
 
-//TODO add equals override
-
 public class Rank {
 	private String name;
 	private String description;
