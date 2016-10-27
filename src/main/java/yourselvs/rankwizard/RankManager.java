@@ -7,7 +7,8 @@ import java.util.Set;
 
 public class RankManager {
 	RankWizard instance;
-	private List<RankClass> classes; // first class is default class
+	private List<RankClass> classes;
+	private String defaultClass;
 	
 	public RankManager(RankWizard instance) {
 		this.instance = instance;
@@ -18,8 +19,8 @@ public class RankManager {
 		classes.add(newClass);
 	}
 	
-	public void addDefaultClass(RankClass defaultClass) {
-		classes.add(0, defaultClass);
+	public void setDefaultClass(String defaultClass) {
+		this.defaultClass = defaultClass;
 	}
 	
 	public RankClass removeClass(String classStr) {
@@ -50,5 +51,25 @@ public class RankManager {
 		}
 		
 		return classes;
+	}
+	
+	public RankClass getDefaultClass() {
+		for(RankClass classObj : classes) {
+			if(classObj.getName().equals(defaultClass)) {
+				return classObj;
+			}
+		}
+		
+		return null;
+	}
+	
+	public RankClass getClass(String classStr) {
+		for(RankClass classObj : classes) {
+			if(classObj.getName().equals(classStr)) {
+				return classObj;
+			}
+		}
+		
+		return null;
 	}
 }
