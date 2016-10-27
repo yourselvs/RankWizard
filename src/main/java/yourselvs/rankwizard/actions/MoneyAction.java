@@ -1,29 +1,48 @@
 package yourselvs.rankwizard.actions;
 
+import java.math.BigDecimal;
+
 import org.bukkit.entity.Player;
 
+import net.ess3.api.Economy;
 import yourselvs.rankwizard.RankAction;
 
 public class MoneyAction implements RankAction {
-
+	private BigDecimal value;
+	
+	public MoneyAction(BigDecimal value) {
+		this.value = value;
+	}
+	
 	public boolean canGiveToPlayer(Player player) {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	public boolean canTakeFromPlayer(Player player) {
-		// TODO Auto-generated method stub
+		try {
+			if(!Economy.hasLess(player.getName(), value)) {
+				return true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return false;
 	}
 
 	public void giveToPlayer(Player player) {
-		// TODO Auto-generated method stub
-
+		try {
+			Economy.add(player.getName(), value);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void takeFromPlayer(Player player) {
-		// TODO Auto-generated method stub
-
+		try {
+			Economy.substract(player.getName(), value);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 }

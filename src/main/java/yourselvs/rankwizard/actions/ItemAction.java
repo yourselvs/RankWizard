@@ -1,29 +1,40 @@
 package yourselvs.rankwizard.actions;
 
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import yourselvs.rankwizard.RankAction;
 
 public class ItemAction implements RankAction {
-
+	ItemStack item;
+	
+	public ItemAction(ItemStack item) {
+		
+	}
+	
 	public boolean canGiveToPlayer(Player player) {
-		// TODO Auto-generated method stub
-		return false;
+		if(player.getInventory().firstEmpty() == -1) {
+			return false;
+		}
+		
+		return true;
 	}
 
 	public boolean canTakeFromPlayer(Player player) {
-		// TODO Auto-generated method stub
+		if(player.getInventory().contains(item)) {
+			return true;
+		}
+		
 		return false;
 	}
 
 	public void giveToPlayer(Player player) {
-		// TODO Auto-generated method stub
-
+		player.getInventory().setItem(player.getInventory().firstEmpty(), item);
 	}
 
 	public void takeFromPlayer(Player player) {
-		// TODO Auto-generated method stub
-
+		player.getInventory().setItem(player.getInventory().first(item), new ItemStack(Material.AIR));
 	}
 
 }
