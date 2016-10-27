@@ -1,8 +1,5 @@
 package yourselvs.rankwizard;
 
-import java.util.List;
-
-import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -16,12 +13,9 @@ import yourselvs.rankwizard.utils.Messenger;
 public class RankWizard extends JavaPlugin 
 {
 	public String version;
-	//private String prefix = "[" + ChatColor.BLUE + ChatColor.BOLD + "RW" + ChatColor.RESET + "] ";
-	private String prefix;
-	//private String linkPrefix = ChatColor.AQUA + "[" + ChatColor.BLUE + ChatColor.BOLD + "RW" + ChatColor.RESET + ChatColor.AQUA + "]" + ChatColor.RESET + " ";
-	private String linkPrefix;
-	//private String unformattedPrefix = "[RW] ";
-	private String unformattedPrefix;
+	private String prefix; //"[" + ChatColor.BLUE + ChatColor.BOLD + "RW" + ChatColor.RESET + "] "
+	private String linkPrefix; //ChatColor.AQUA + "[" + ChatColor.BLUE + ChatColor.BOLD + "RW" + ChatColor.RESET + ChatColor.AQUA + "]" + ChatColor.RESET + " "
+	private String unformattedPrefix; //[RW]
 	private String rankTreeLink;
 	private int maxSpecializationClasses;
 	private double specializationModifier;
@@ -47,6 +41,7 @@ public class RankWizard extends JavaPlugin
     	maxSpecializationClasses = config.getInt("maxSpecializationClasses");
     	specializationModifier = config.getDouble("specializationModifier");
     	specializationMultiplier = config.getDouble("specializationModifier");
+    	defaultClassName = config.getString("defaultClassName");
     	
     	formatter = new DateFormatter();
     	messenger = new Messenger(this, prefix, linkPrefix, unformattedPrefix);
@@ -74,17 +69,18 @@ public class RankWizard extends JavaPlugin
     	dbConfigured = true;
     	
     	rankManager = new RankManager(this);
+    	rankManager.setDefaultClass(defaultClassName);
 	}
 	
 	public String getRankTreeLink() {return rankTreeLink;}
 	public int getMaxSpecializationClasses() {return maxSpecializationClasses;}
 	public double getSpecializationModifier() {return specializationModifier;}
 	public double getSpecializationMultiplier() {return specializationMultiplier;}
-	public RankClass getDefaultClass() {
-		for(RankClass index : classes) {
-			if(index.getName().equalsIgnoreCase(defaultClassName))
-				return index;
-		}
-		return null;
-	}
+	
+	public Messenger getMessenger() {return messenger;}
+	public DateFormatter getFormatter() {return formatter;}
+	public RankManager getRankManager() {return rankManager;}
+	public IDatabase getDB() {return db;}
+	
+	public boolean isDBConfigured() {return dbConfigured;}
 }
