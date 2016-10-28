@@ -5,7 +5,6 @@ import org.bukkit.entity.Player;
 import ru.tehkode.permissions.PermissionGroup;
 import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
-import yourselvs.rankwizard.RankAction;
 
 public class GroupAction implements RankAction {
 	private PermissionGroup group;
