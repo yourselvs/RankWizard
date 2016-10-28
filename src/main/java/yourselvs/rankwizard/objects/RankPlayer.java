@@ -1,4 +1,4 @@
-package yourselvs.rankwizard;
+package yourselvs.rankwizard.objects;
 
 import java.util.ArrayList;
 import java.util.List;

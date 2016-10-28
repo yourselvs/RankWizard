@@ -5,12 +5,12 @@ import org.bson.Document;
 import org.bukkit.Location;
 import org.bukkit.World;
 
-import yourselvs.rankwizard.Rank;
-import yourselvs.rankwizard.RankClass;
-import yourselvs.rankwizard.RankPlayer;
 import yourselvs.rankwizard.RankWizard;
 import yourselvs.rankwizard.database.interfaces.IDatabase;
 import yourselvs.rankwizard.database.interfaces.IMongo;
+import yourselvs.rankwizard.objects.Rank;
+import yourselvs.rankwizard.objects.RankClass;
+import yourselvs.rankwizard.objects.RankPlayer;
 
 public class MongoHandler implements IDatabase {
 	private RankWizard plugin;

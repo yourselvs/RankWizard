@@ -3,6 +3,7 @@ package yourselvs.rankwizard;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import yourselvs.rankwizard.commands.RankManager;
 import yourselvs.rankwizard.database.MongoDBStorage;
 import yourselvs.rankwizard.database.MongoHandler;
 import yourselvs.rankwizard.database.interfaces.IDatabase;

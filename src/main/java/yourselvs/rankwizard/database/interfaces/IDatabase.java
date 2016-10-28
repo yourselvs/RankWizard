@@ -1,9 +1,10 @@
 package yourselvs.rankwizard.database.interfaces;
 
 import java.util.List;
-import yourselvs.rankwizard.Rank;
-import yourselvs.rankwizard.RankClass;
-import yourselvs.rankwizard.RankPlayer;
+
+import yourselvs.rankwizard.objects.Rank;
+import yourselvs.rankwizard.objects.RankClass;
+import yourselvs.rankwizard.objects.RankPlayer;
 
 public interface IDatabase {	
 	public List<RankClass> getClasses();

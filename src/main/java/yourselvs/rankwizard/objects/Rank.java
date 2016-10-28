@@ -1,31 +1,33 @@
-package yourselvs.rankwizard;
+package yourselvs.rankwizard.objects;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
+
+import yourselvs.rankwizard.actions.RankAction;
 
 public class Rank {
 	private String name;
 	private String description;
 	private boolean mainClassOnly;
 	private boolean forceRankupOnly;
-	private Set<RankAction> requirements;
-	private Set<RankAction> rewards;
+	private List<RankAction> requirements;
+	private List<RankAction> rewards;
 	
 	public Rank(String name) {
 		this.name = name;
 		description = "";
 		mainClassOnly = false;
 		forceRankupOnly = false;
-		requirements = new HashSet<RankAction>();
-		rewards = new HashSet<RankAction>();
+		requirements = new ArrayList<RankAction>();
+		rewards = new ArrayList<RankAction>();
 	}
 	
 	public String getName() {return name;}
 	public String getDescription() {return description;}
 	public boolean isMainClassOnly() {return mainClassOnly;}
 	public boolean isForceRankupOnly() {return forceRankupOnly;}
-	public Set<RankAction> getRequirements() {return requirements;}
-	public Set<RankAction> getRewards() {return rewards;}
+	public List<RankAction> getRequirements() {return requirements;}
+	public List<RankAction> getRewards() {return rewards;}
 	
 	public void setName(String name) {this.name = name;}
 	public void setDescription(String description) {this.description = description;}
