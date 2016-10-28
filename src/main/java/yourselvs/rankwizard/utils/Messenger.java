@@ -17,15 +17,12 @@ import com.mythicacraft.voteroulette.utils.InteractiveMessageAPI.InteractiveMess
 public class Messenger {
 	private String prefix;
 	private String linkPrefix;
-	private String unformattedPrefix;
-	
 	private JavaPlugin plugin;
 	
-	public Messenger(JavaPlugin instance, String prefix, String linkPrefix, String unformattedPrefix){
+	public Messenger(JavaPlugin instance, String prefix, String linkPrefix){
 		this.plugin = instance;
 		this.prefix = prefix;
 		this.linkPrefix = prefix;
-		this.unformattedPrefix = prefix;
 	}
 	
 	public void setPrefix(String prefix){
@@ -37,7 +34,6 @@ public class Messenger {
 	}
 	
 	public void setUnformattedPrefix(String prefix){
-		this.unformattedPrefix = prefix;
 	}
 	
 	public void sendPlayerLog(Player player, String message){
@@ -58,7 +54,7 @@ public class Messenger {
 	}
 	
 	public void sendMessage(CommandSender player, String message){
-		player.sendMessage(unformattedPrefix + message);
+		player.sendMessage(prefix + message);
 	}
 	
 	public void sendServerMessage(String message){

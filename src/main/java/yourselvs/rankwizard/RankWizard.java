@@ -20,7 +20,6 @@ public class RankWizard extends JavaPlugin
 	public String version;
 	private String prefix; //"[" + ChatColor.BLUE + ChatColor.BOLD + "RW" + ChatColor.RESET + "] "
 	private String linkPrefix; //ChatColor.AQUA + "[" + ChatColor.BLUE + ChatColor.BOLD + "RW" + ChatColor.RESET + ChatColor.AQUA + "]" + ChatColor.RESET + " "
-	private String unformattedPrefix; //[RW]
 	private String rankTreeLink;
 	private int maxSpecializationClasses;
 	private double specializationModifier;
@@ -42,7 +41,6 @@ public class RankWizard extends JavaPlugin
     	
     	prefix = config.getString("prefix");
     	linkPrefix = config.getString("linkPrefix");
-    	unformattedPrefix = config.getString("unformattedPrefix");
     	rankTreeLink = config.getString("rankTreeLink");
     	maxSpecializationClasses = config.getInt("maxSpecializationClasses");
     	specializationModifier = config.getDouble("specializationModifier");
@@ -50,7 +48,7 @@ public class RankWizard extends JavaPlugin
     	defaultClassName = config.getString("defaultClassName");
     	
     	formatter = new DateFormatter();
-    	messenger = new Messenger(this, prefix, linkPrefix, unformattedPrefix);
+    	messenger = new Messenger(this, prefix, linkPrefix);
     	
     	String textUri = config.getString("textUri");
     	String dbName = config.getString("dbName");
