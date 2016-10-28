@@ -81,4 +81,12 @@ public class CommandManager {
 	public void viewClass(Player player) {
 		
 	}
+	
+	public void viewInfo(Player player) {
+		
+	}
+	
+	public void viewHelp(Player player) {
+		
+	}
 }

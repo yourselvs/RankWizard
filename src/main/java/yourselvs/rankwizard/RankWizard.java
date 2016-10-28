@@ -1,8 +1,12 @@
 package yourselvs.rankwizard;
 
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import yourselvs.rankwizard.commands.Cmd;
+import yourselvs.rankwizard.commands.CommandParser;
 import yourselvs.rankwizard.commands.RankManager;
 import yourselvs.rankwizard.database.MongoDBStorage;
 import yourselvs.rankwizard.database.MongoHandler;
@@ -29,6 +33,7 @@ public class RankWizard extends JavaPlugin
 	private RankManager rankManager;	
 	private DateFormatter formatter;
 	private Messenger messenger;
+	private CommandParser commandParser;
 	
 	@Override
 	public void onEnable() {
@@ -71,6 +76,8 @@ public class RankWizard extends JavaPlugin
     	
     	rankManager = new RankManager(this);
     	rankManager.setDefaultClass(defaultClassName);
+    	
+    	commandParser = new CommandParser(this);
 	}
 	
 	public String getRankTreeLink() {return rankTreeLink;}
@@ -82,6 +89,16 @@ public class RankWizard extends JavaPlugin
 	public DateFormatter getFormatter() {return formatter;}
 	public RankManager getRankManager() {return rankManager;}
 	public IDatabase getDB() {return db;}
+	public CommandParser getCommandParser() {return commandParser;}
 	
 	public boolean isDBConfigured() {return dbConfigured;}
+	
+	@Override
+	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+		if(!dbConfigured)
+			sender.sendMessage(prefix + "Your plugin database is not properly configured. Ask your server administrators to fix this issue.");
+		else
+			commandParser.parseCommand(new Cmd(sender, command, label, args));
+		return true;
+	}
 }
