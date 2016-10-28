@@ -1,4 +1,4 @@
-package yourselvs.rankwizard;
+package yourselvs.rankwizard.actions;
 
 import org.bukkit.entity.Player;
 

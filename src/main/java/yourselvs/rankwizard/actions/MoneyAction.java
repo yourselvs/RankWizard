@@ -5,7 +5,6 @@ import java.math.BigDecimal;
 import org.bukkit.entity.Player;
 
 import net.ess3.api.Economy;
-import yourselvs.rankwizard.RankAction;
 
 public class MoneyAction implements RankAction {
 	private BigDecimal value;

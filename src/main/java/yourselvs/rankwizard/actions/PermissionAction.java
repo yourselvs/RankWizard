@@ -5,7 +5,6 @@ import org.bukkit.permissions.Permission;
 
 import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
-import yourselvs.rankwizard.RankAction;
 
 public class PermissionAction implements RankAction {
 	Permission permission;

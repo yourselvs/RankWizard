@@ -4,8 +4,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import yourselvs.rankwizard.RankAction;
-
 public class ItemAction implements RankAction {
 	ItemStack item;
 	
