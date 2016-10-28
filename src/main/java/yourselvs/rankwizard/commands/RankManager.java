@@ -1,9 +1,12 @@
-package yourselvs.rankwizard;
+package yourselvs.rankwizard.commands;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import yourselvs.rankwizard.RankWizard;
+import yourselvs.rankwizard.objects.RankClass;
 
 public class RankManager {
 	RankWizard instance;
@@ -39,18 +42,6 @@ public class RankManager {
 			}
 		}
 		return false;
-	}
-	
-	public Set<RankClass> getClassesWithRank(String str) {
-		Set<RankClass> classes = new HashSet<RankClass>();
-		
-		for(RankClass classObj : this.classes) {
-			if(classObj.containsRank(str)) {
-				classes.add(classObj);
-			}
-		}
-		
-		return classes;
 	}
 	
 	public RankClass getDefaultClass() {
