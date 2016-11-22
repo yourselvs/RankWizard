@@ -18,11 +18,13 @@ public class Messenger {
 	private String prefix;
 	private String linkPrefix;
 	private JavaPlugin plugin;
+	private ChatColor highlight;
 	
-	public Messenger(JavaPlugin instance, String prefix, String linkPrefix){
+	public Messenger(JavaPlugin instance, String prefix, String linkPrefix, ChatColor highlight){
 		this.plugin = instance;
 		this.prefix = prefix;
 		this.linkPrefix = prefix;
+		this.highlight = highlight;
 	}
 	
 	public void setPrefix(String prefix){
@@ -33,28 +35,23 @@ public class Messenger {
 		this.linkPrefix = prefix;
 	}
 	
-	public void setUnformattedPrefix(String prefix){
+	public void setHighlight(ChatColor highlight){
+		this.highlight = highlight;
 	}
 	
 	public void sendPlayerLog(Player player, String message){
 		plugin.getLogger().info("Player \"" + player.getName() + "\" : " + message + "(UUID: " + player.getUniqueId().toString() + ")");
 	}
 	
-	public void sendMessage(Player player, String message){
-		player.sendMessage(prefix + ChatColor.RESET + message + ChatColor.RESET);
-	}
-	
-	public void sendMessages(Player player, List<String> msgs){
+	public void sendMessages(CommandSender player, List<String> msgs, String title){
 		ArrayList<String> updateMessages = new ArrayList<String>();
-		updateMessages.add(prefix + "- - - - - - - - - - - - - - ");
-		for(String message : msgs)
-			updateMessages.add(message + ChatColor.RESET);
-		updateMessages.add(prefix + "- - - - - - - - - - - - - - ");
+		updateMessages.add(prefix + ChatColor.DARK_GRAY + "- - [ " + highlight + title + ChatColor.RESET + ChatColor.DARK_GRAY + "] - - - - - - - - - - - -");
+		updateMessages.addAll(msgs);
 		player.sendMessage(updateMessages.toArray(new String[msgs.size()]));
 	}
 	
 	public void sendMessage(CommandSender player, String message){
-		player.sendMessage(prefix + message);
+		player.sendMessage(prefix + ChatColor.RESET + message + ChatColor.RESET);
 	}
 	
 	public void sendServerMessage(String message){
@@ -64,25 +61,25 @@ public class Messenger {
 	
 	public void sendServerMessage(ArrayList<String> messages){
 		for(Player player : plugin.getServer().getOnlinePlayers())
-			sendMessages(player, messages);
+			sendMessages(player, messages, "");
 	}
 	
-	public void sendClickMessage(Player player, String line, String hoverMessage, String command){
+	public void sendClickMessage(CommandSender player, String line, String hoverMessage, String command){
 		InteractiveMessage message = new InteractiveMessage(new InteractiveMessageElement(new FormattedText(linkPrefix + line), HoverEvent.SHOW_TEXT, new FormattedText(hoverMessage), ClickEvent.RUN_COMMAND, command));	
 		message.sendTo(player);
 	}
 	
-	public void sendClickMessage(Player player, String line, String command){
+	public void sendClickMessage(CommandSender player, String line, String command){
 		InteractiveMessage message = new InteractiveMessage(new InteractiveMessageElement(new FormattedText(linkPrefix + line), HoverEvent.NONE, new FormattedText(""), ClickEvent.RUN_COMMAND, command));	
 		message.sendTo(player);
 	}
 	
-	public void sendSuggestMessage(Player player, String line, String hoverMessage, String command){
+	public void sendSuggestMessage(CommandSender player, String line, String hoverMessage, String command){
 		InteractiveMessage message = new InteractiveMessage(new InteractiveMessageElement(new FormattedText(linkPrefix + line), HoverEvent.SHOW_TEXT, new FormattedText(hoverMessage), ClickEvent.SUGGEST_COMMAND, command));	
 		message.sendTo(player);
 	}
 
-	public void sendSuggestMessage(Player player, String line, String command){
+	public void sendSuggestMessage(CommandSender player, String line, String command){
 		InteractiveMessage message = new InteractiveMessage(new InteractiveMessageElement(new FormattedText(linkPrefix + line), HoverEvent.NONE, new FormattedText(""), ClickEvent.SUGGEST_COMMAND, command));
 		message.sendTo(player);
 	}

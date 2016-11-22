@@ -1,0 +1,9 @@
+rankTreeLink: none
+maxSpecializationClasses: -1
+specializationModifier: 0
+specializationMultiplier: 1
+defaultClassName: none
+tierOneRepair: .15
+tierTwoRepair: .3
+tierThreeRepair: .45
+tierFourRepair: .6

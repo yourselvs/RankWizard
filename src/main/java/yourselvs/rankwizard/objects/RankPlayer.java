@@ -1,27 +1,28 @@
 package yourselvs.rankwizard.objects;
 
-import java.util.ArrayList;
+import java.io.Serializable;
 import java.util.List;
 
-import org.bukkit.entity.Player;
+import yourselvs.rankwizard.RankWizard;
 
-public class RankPlayer {
-	private Player player;
+public class RankPlayer implements Serializable{
+	private String player;
 	private List<RankClass> classes; // first class is default class, second class is main class, last class is current class
-	private List<Rank> ranks; // sorted in chronological order
+	private Rank rank; // sorted in chronological order
 	
-	public RankPlayer(Player player, RankClass currClass) {
-		this.player = player;
-		classes = new ArrayList<RankClass>();
-		classes.add(currClass);
-		ranks = new ArrayList<Rank>();
-		ranks.add(currClass.getRanks().get(0));
+	public RankPlayer() {
+		
 	}
 	
-	public Player getPlayer() {return player;}
+	public RankPlayer(String player, List<RankClass> classes, Rank rank) {
+		this.player = player;
+		this.classes = classes;
+		this.rank = rank;
+	}
+	
+	public String getName() {return player;}
 	public List<RankClass> getClasses() {return classes;}
-	public List<Rank> getRanks() {return ranks;}
-	public Rank getRank() {return ranks.get(ranks.size() - 1);}
+	public Rank getRank() {return rank;}
 	
 	public RankClass getMainClass() {
 		if(classes.size() > 1) {
@@ -32,5 +33,25 @@ public class RankPlayer {
 	
 	public RankClass getCurrentClass() {
 		return classes.get(classes.size() - 1);
+	}
+	
+	public void setRank(Rank rank) {
+		this.rank = rank;
+		RankWizard.saveManager();
+	}
+	
+	public void addClass(RankClass classObj) {
+		classes.add(classObj);
+		RankWizard.saveManager();
+	}
+
+	public boolean containsClass(RankClass classObj) {
+		for(RankClass classCompare : classes) {
+			if(classObj.getName() == classCompare.getName()) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 }

@@ -1,81 +1,83 @@
 package yourselvs.rankwizard;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.permission.Permission;
 import yourselvs.rankwizard.commands.Cmd;
 import yourselvs.rankwizard.commands.CommandParser;
-import yourselvs.rankwizard.commands.RankManager;
-import yourselvs.rankwizard.database.MongoDBStorage;
-import yourselvs.rankwizard.database.MongoHandler;
-import yourselvs.rankwizard.database.interfaces.IDatabase;
-import yourselvs.rankwizard.database.interfaces.IMongo;
+import yourselvs.rankwizard.listeners.PlayerListener;
 import yourselvs.rankwizard.utils.DateFormatter;
 import yourselvs.rankwizard.utils.Messenger;
 
+//TODO remove end line from multi-messages, add a subject parameter
+//TODO create utility class for multi-messages
+//TODO highlight classes youve already joined in /classes
+
 public class RankWizard extends JavaPlugin 
 {
-	public String version;
-	private String prefix; //"[" + ChatColor.BLUE + ChatColor.BOLD + "RW" + ChatColor.RESET + "] "
-	private String linkPrefix; //ChatColor.AQUA + "[" + ChatColor.BLUE + ChatColor.BOLD + "RW" + ChatColor.RESET + ChatColor.AQUA + "]" + ChatColor.RESET + " "
+	public static final	String fileName = "plugins/RankWizard/rankwizard.ser";
+	public static final	String backupFileName = "plugins/RankWizard/backup.ser";
+	public static final String version = "0.1";
+	
+	private String prefix = "[" + ChatColor.BLUE + ChatColor.BOLD + "RW" + ChatColor.RESET + "] ";
+	private String linkPrefix = ChatColor.AQUA + "[" + ChatColor.BLUE + ChatColor.BOLD + "RW" + ChatColor.RESET + ChatColor.AQUA + "]" + ChatColor.RESET + " ";
 	private String rankTreeLink;
 	private int maxSpecializationClasses;
 	private double specializationModifier;
 	private double specializationMultiplier;
-	private String defaultClassName;
 	
-	private boolean dbConfigured = false;
-	private IMongo mongo;
-	private IDatabase db;
-	private RankManager rankManager;	
+	private static RankManager rankManager;	
 	private DateFormatter formatter;
 	private Messenger messenger;
 	private CommandParser commandParser;
+	private Permission perms = null;
+	private Economy econ = null;
 	
+	private Map<Integer, Double> repairVals;
+	
+	@SuppressWarnings("unused")
+	private PlayerListener listener;
+    
 	@Override
 	public void onEnable() {
 		saveDefaultConfig();
     	FileConfiguration config = getConfig();
     	
-    	prefix = config.getString("prefix");
-    	linkPrefix = config.getString("linkPrefix");
     	rankTreeLink = config.getString("rankTreeLink");
     	maxSpecializationClasses = config.getInt("maxSpecializationClasses");
     	specializationModifier = config.getDouble("specializationModifier");
     	specializationMultiplier = config.getDouble("specializationModifier");
-    	defaultClassName = config.getString("defaultClassName");
+    	repairVals = new HashMap<Integer, Double>();
+    	repairVals.put(1, config.getDouble("tierOneRepair"));
+    	repairVals.put(2, config.getDouble("tierTwoRepair"));
+    	repairVals.put(3, config.getDouble("tierThreeRepair"));
+    	repairVals.put(4, config.getDouble("tierFourRepair"));
     	
     	formatter = new DateFormatter();
-    	messenger = new Messenger(this, prefix, linkPrefix);
+    	messenger = new Messenger(this, prefix, linkPrefix, ChatColor.YELLOW);
     	
-    	String textUri = config.getString("textUri");
-    	String dbName = config.getString("dbName");
-    	String collectionName = config.getString("collectionName");
-    	
-    	if(textUri.equalsIgnoreCase("not configured"))
-    		return;
-    	if(dbName.equalsIgnoreCase("not configured"))
-    		return;
-    	if(collectionName.equalsIgnoreCase("not configured"))
-    		return;
-    	
-    	try {
-	    	mongo = new MongoDBStorage(textUri, dbName, collectionName);
-	    	db = new MongoHandler(this, mongo);
-	    } 
-    	catch (Exception e) {
-    		e.printStackTrace();
-    		return;
-    	}
-    	
-    	dbConfigured = true;
-    	
-    	rankManager = new RankManager(this);
-    	rankManager.setDefaultClass(defaultClassName);
+    	setupEconomy();
+    	setupPermissions();
+
+    	rankManager = readManager(fileName);
     	
     	commandParser = new CommandParser(this);
+    	
+    	listener = new PlayerListener(this);
 	}
 	
 	public String getRankTreeLink() {return rankTreeLink;}
@@ -86,17 +88,82 @@ public class RankWizard extends JavaPlugin
 	public Messenger getMessenger() {return messenger;}
 	public DateFormatter getFormatter() {return formatter;}
 	public RankManager getRankManager() {return rankManager;}
-	public IDatabase getDB() {return db;}
 	public CommandParser getCommandParser() {return commandParser;}
+	public Permission getPerms() {return perms;}
+	public Economy getEcon() {return econ;}
 	
-	public boolean isDBConfigured() {return dbConfigured;}
+	public Map<Integer, Double> getRepairVals() {return repairVals;}
 	
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-		if(!dbConfigured)
-			sender.sendMessage(prefix + "Your plugin database is not properly configured. Ask your server administrators to fix this issue.");
-		else
-			commandParser.parseCommand(new Cmd(sender, command, label, args));
+		commandParser.parseCommand(new Cmd(sender, command, label, args));
 		return true;
 	}
+	
+    private boolean setupEconomy() {
+        if (getServer().getPluginManager().getPlugin("Vault") == null) {
+            return false;
+        }
+        RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
+        if (rsp == null) {
+            return false;
+        }
+        econ = rsp.getProvider();
+        return econ != null;
+    }
+    
+    private boolean setupPermissions() {
+        RegisteredServiceProvider<Permission> rsp = getServer().getServicesManager().getRegistration(Permission.class);
+        perms = rsp.getProvider();
+        return perms != null;
+    }
+    
+    public void resetManager() {
+    	rankManager = new RankManager(this);
+    }
+    
+    public static void saveManager() {
+    	saveManager(fileName);
+    }
+    
+    public static void backupManager() {
+    	saveManager(backupFileName);
+    }
+    
+    public void restoreManager() {
+    	rankManager = readManager(backupFileName);
+    }
+    
+    private RankManager readManager(String fileName) {    	
+    	try {
+			FileInputStream fis = new FileInputStream(fileName);
+			ObjectInputStream ois = new ObjectInputStream(fis);
+			
+			rankManager = (RankManager) ois.readObject();
+			ois.close();
+		} catch (IOException | ClassNotFoundException e) {
+			rankManager = new RankManager(this);
+			saveManager(fileName);
+			e.printStackTrace();
+		}
+    	
+		return rankManager;
+    }
+    
+    public static void saveManager(String fileName) {
+    	new Thread(new Runnable() {
+	        public void run(){
+	        	try {
+	    			FileOutputStream fileStream = new FileOutputStream(fileName);
+	    			ObjectOutputStream objectStream = new ObjectOutputStream(fileStream);
+	    			
+	    			objectStream.writeObject(rankManager);
+	    			objectStream.close();
+	    		} catch (IOException e) {
+	    			e.printStackTrace();
+	    		}
+	        }
+	    }).start();
+    }
+
 }

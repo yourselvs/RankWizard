@@ -3,3 +3,23 @@ name: RankWizard
 version: 0.1
 author: yourselvs
 description: A plugin designed to help servers create ranks with easy-to-manage requirements and rewards.
+commands:
+    rw:
+        description: Access to administrative commands.
+    rankup:
+        description: Ranks a player up.
+    chooseclass:
+        description: Chooses a class.
+    rank:
+        description: Views current rank.
+    ranks:
+        description: Lists ranks.
+    class:
+        description: Views current class.
+    classes:
+        description: Views all classes.
+permissions:
+    rankwizard.admin:
+        default: op
+    rankwizard.general:
+        default: true
