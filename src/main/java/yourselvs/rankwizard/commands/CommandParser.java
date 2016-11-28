@@ -7,6 +7,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import ru.tehkode.permissions.PermissionUser;
+import ru.tehkode.permissions.bukkit.PermissionsEx;
 import yourselvs.rankwizard.RankManager;
 import yourselvs.rankwizard.RankWizard;
 import yourselvs.rankwizard.actions.CommandAction;
@@ -1327,7 +1329,15 @@ public class CommandParser {
 					else if(action.equals(new GroupAction(instance, ""))) {
 						GroupAction gAction = (GroupAction) action;
 						msgs.add(ChatColor.YELLOW + nextRank.getName() + ChatColor.RESET + " requires you to be in group " + ChatColor.YELLOW + gAction.getGroup() + ChatColor.RESET + ".");
-						msgs.add("You are in group " + ChatColor.YELLOW + instance.getPerms().getPrimaryGroup(player) + ChatColor.RESET + ".");
+
+						PermissionUser user = PermissionsEx.getUser(player);
+						
+						if(user.inGroup(gAction.getGroup())) {
+							msgs.add("You " + ChatColor.GREEN + "are" + ChatColor.RESET + " in group " + ChatColor.YELLOW + gAction.getGroup() + ChatColor.RESET + ".");
+						}
+						else {
+							msgs.add("   - You are " + ChatColor.RED + "not" + ChatColor.RESET + " in group " + ChatColor.YELLOW + gAction.getGroup() + ChatColor.RESET + ".");
+						}
 					}
 				}
 				
