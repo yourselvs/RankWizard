@@ -5,6 +5,7 @@ import java.io.Serializable;
 import org.bukkit.entity.Player;
 
 import yourselvs.rankwizard.RankWizard;
+import yourselvs.rankwizard.objects.RankPlayer;
 
 public class MoneyAction implements RankAction, Serializable {
 	private double value;
@@ -44,7 +45,16 @@ public class MoneyAction implements RankAction, Serializable {
 
 	public void takeFromPlayer(Player player) {
 		try {
-			instance.getEcon().withdrawPlayer(player, value);
+			double newValue = value;
+			
+			RankPlayer rankPlayer = instance.getRankManager().getRankPlayer(player.getName());
+			
+			if(!rankPlayer.getCurrentClass().equals(rankPlayer.getMainClass())) {
+				newValue *= instance.getSpecializationMultiplier();
+				newValue += instance.getSpecializationModifier();
+			}
+			
+			instance.getEcon().withdrawPlayer(player, newValue);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -61,6 +71,11 @@ public class MoneyAction implements RankAction, Serializable {
 	
 	@Override
 	public String toString() {
-		return instance.getEcon().format(value);
+		double newValue = value;
+		
+		newValue *= instance.getSpecializationMultiplier();
+		newValue += instance.getSpecializationModifier();
+		
+		return instance.getEcon().format(value) + " / " + instance.getEcon().format(newValue);
 	}
 }
