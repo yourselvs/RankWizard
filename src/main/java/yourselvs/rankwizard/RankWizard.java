@@ -22,8 +22,6 @@ import yourselvs.rankwizard.listeners.PlayerListener;
 import yourselvs.rankwizard.utils.DateFormatter;
 import yourselvs.rankwizard.utils.Messenger;
 
-//TODO remove end line from multi-messages, add a subject parameter
-//TODO create utility class for multi-messages
 //TODO highlight classes youve already joined in /classes
 
 public class RankWizard extends JavaPlugin 
