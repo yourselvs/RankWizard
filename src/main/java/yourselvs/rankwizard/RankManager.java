@@ -212,6 +212,7 @@ public class RankManager implements Serializable {
 				
 				players.add(rankPlayer);
 				RankWizard.saveManager();
+				return rankPlayer;
 			}
 		}
 		return null;
