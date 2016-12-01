@@ -24,7 +24,6 @@ public class CommandParser {
 	
 	public CommandParser(RankWizard instance) {
 		this.instance = instance;
-		instance.getRankManager().setInstance(instance);
 	}
 	
 	public void parseCommand(Cmd command) {
