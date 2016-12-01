@@ -237,6 +237,9 @@ public class RankManager implements Serializable {
 			if(player == null) {
 				player = Bukkit.getOfflinePlayer(players.get(i).getName()).getPlayer();
 			}
+			if(player == null) {
+				continue;
+			}
 			
 			List<RankAction> rewards = rank.getRewards();
 			List<String> msgs = new ArrayList<String>();
@@ -258,6 +261,7 @@ public class RankManager implements Serializable {
 			newPlayers.add(rankPlayer);
 		}
 		players = newPlayers;
+		RankWizard.saveManager();
 	}
 	
 	public void addPlayer(String name, List<RankClass> classes, Rank rank) {
