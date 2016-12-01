@@ -1321,6 +1321,7 @@ public class CommandParser {
 				}
 				else {
 					msgs.add("You need to choose a class for your next rank.");
+					msgs.add("Use " + ChatColor.YELLOW + "/chooseclass <class name>" + ChatColor.RESET + " to choose your next class.");
 					msgs.add("Use " + ChatColor.YELLOW + "/class" + ChatColor.RESET + " to see more information.");
 				}
 			}
