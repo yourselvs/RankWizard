@@ -33,6 +33,9 @@ public class RankWizard extends JavaPlugin
 	public static final	String backupFileName = "plugins/RankWizard/backup.ser";
 	public static final String version = "0.1";
 	
+	private final static Object managerLock = new Object();
+	private final static Object commandLock = new Object();
+	
 	private String prefix = "[" + ChatColor.BLUE + ChatColor.BOLD + "RW" + ChatColor.RESET + "] ";
 	private String linkPrefix = ChatColor.AQUA + "[" + ChatColor.BLUE + ChatColor.BOLD + "RW" + ChatColor.RESET + ChatColor.AQUA + "]" + ChatColor.RESET + " ";
 	private String rankTreeLink;
@@ -96,7 +99,17 @@ public class RankWizard extends JavaPlugin
 	
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-		commandParser.parseCommand(new Cmd(sender, command, label, args));
+		Thread t = new Thread(new Runnable() {
+	        public void run(){
+	        	synchronized(commandLock) {
+	        		commandParser.parseCommand(new Cmd(sender, command, label, args));
+	        	}
+	        }
+	    });
+		
+		t.setName("RankWizard Command Processor");
+		t.start();
+		
 		return true;
 	}
 	
@@ -151,19 +164,24 @@ public class RankWizard extends JavaPlugin
     }
     
     public static void saveManager(String fileName) {
-    	new Thread(new Runnable() {
+    	Thread t = new Thread(new Runnable() {
 	        public void run(){
-	        	try {
-	    			FileOutputStream fileStream = new FileOutputStream(fileName);
-	    			ObjectOutputStream objectStream = new ObjectOutputStream(fileStream);
-	    			
-	    			objectStream.writeObject(rankManager);
-	    			objectStream.close();
-	    		} catch (IOException e) {
-	    			e.printStackTrace();
-	    		}
+	        	synchronized(managerLock) {
+		        	try {
+		    			FileOutputStream fileStream = new FileOutputStream(fileName);
+		    			ObjectOutputStream objectStream = new ObjectOutputStream(fileStream);
+		    			
+		    			objectStream.writeObject(rankManager);
+		    			objectStream.close();
+		    		} catch (IOException e) {
+		    			e.printStackTrace();
+		    		}
+	        	}
 	        }
-	    }).start();
+	    });
+    	
+    	t.setName("RankWizard Data Writer");
+    	t.start();
     }
 
 }
