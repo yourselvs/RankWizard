@@ -157,6 +157,8 @@ public class RankWizard extends JavaPlugin
 			e.printStackTrace();
 		}
     	
+    	rankManager.setInstance(this);
+    	
 		return rankManager;
     }
     
