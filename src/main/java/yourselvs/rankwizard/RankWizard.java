@@ -63,7 +63,7 @@ public class RankWizard extends JavaPlugin
     	rankTreeLink = config.getString("rankTreeLink");
     	maxSpecializationClasses = config.getInt("maxSpecializationClasses");
     	specializationModifier = config.getDouble("specializationModifier");
-    	specializationMultiplier = config.getDouble("specializationModifier");
+    	specializationMultiplier = config.getDouble("specializationMultiplier");
     	repairVals = new HashMap<Integer, Double>();
     	repairVals.put(1, config.getDouble("tierOneRepair"));
     	repairVals.put(2, config.getDouble("tierTwoRepair"));
