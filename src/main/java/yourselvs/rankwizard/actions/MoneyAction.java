@@ -26,7 +26,16 @@ public class MoneyAction implements RankAction, Serializable {
 
 	public boolean canTakeFromPlayer(Player player) {
 		try {
-			if(value <= instance.getEcon().getBalance(player)) {
+			double newValue = value;
+			
+			RankPlayer rankPlayer = instance.getRankManager().getRankPlayer(player.getName());
+			
+			if(!rankPlayer.getCurrentClass().equals(rankPlayer.getMainClass())) {
+				newValue *= instance.getSpecializationMultiplier();
+				newValue += instance.getSpecializationModifier();
+			}
+			
+			if(newValue <= instance.getEcon().getBalance(player)) {
 				return true;
 			}
 		} catch (Exception e) {
@@ -77,5 +86,10 @@ public class MoneyAction implements RankAction, Serializable {
 		newValue += instance.getSpecializationModifier();
 		
 		return instance.getEcon().format(value) + " / " + instance.getEcon().format(newValue);
+	}
+	
+	@Override
+	public void setInstance(RankWizard instance) {
+		this.instance = instance;
 	}
 }

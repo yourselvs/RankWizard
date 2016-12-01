@@ -6,6 +6,8 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import yourselvs.rankwizard.RankWizard;
+
 public class ItemAction implements RankAction, Serializable {
 	private ItemStack item;
 	
@@ -49,5 +51,10 @@ public class ItemAction implements RankAction, Serializable {
 	@Override
 	public String toString() {
 		return item.toString();
+	}
+	
+	@Override
+	public void setInstance(RankWizard instance) {
+		
 	}
 }

@@ -5,6 +5,7 @@ import java.io.Serializable;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import ru.tehkode.permissions.PermissionGroup;
 import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 import yourselvs.rankwizard.RankWizard;
@@ -36,7 +37,7 @@ public class GroupAction implements RankAction, Serializable {
 
 	public void giveToPlayer(Player player) {
 		PermissionUser user = PermissionsEx.getUser(player);
-		 
+		
 		user.addGroup(group);
 	}
 
@@ -59,5 +60,10 @@ public class GroupAction implements RankAction, Serializable {
 	public String toString() {
 		return "PEX group: " + ChatColor.YELLOW + group;
 		
+	}
+	
+	@Override
+	public void setInstance(RankWizard instance) {
+		this.instance = instance;
 	}
 }

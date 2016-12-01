@@ -35,6 +35,17 @@ public class RankManager implements Serializable {
 	
 	public void setInstance(RankWizard instance) {
 		this.instance = instance;
+		
+		for(RankClass classObj : classes) {
+			for(Rank rank : classObj.getRanks()) {
+				for(RankAction action : rank.getRequirements()) {
+					action.setInstance(instance);
+				}
+				for(RankAction action : rank.getRewards()) {
+					action.setInstance(instance);
+				}
+			}
+		}
 	}
 	
 	public Map<String, Integer> getItemRepairPlayers() {

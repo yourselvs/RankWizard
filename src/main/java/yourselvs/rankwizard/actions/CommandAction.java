@@ -6,6 +6,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import yourselvs.rankwizard.RankWizard;
+
 public class CommandAction implements RankAction, Serializable {
 	String cmd;
 	
@@ -41,5 +43,10 @@ public class CommandAction implements RankAction, Serializable {
 	@Override
 	public String toString() {
 		return "Command run: " + ChatColor.YELLOW + cmd;
+	}
+	
+	@Override
+	public void setInstance(RankWizard instance) {
+		
 	}
 }
