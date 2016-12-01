@@ -1080,7 +1080,13 @@ public class CommandParser {
 				return;
 			}
 			
-			instance.getMessenger().sendMessage(command.sender, "You need to choose your next class first.");
+			List<String> msgs = new ArrayList<String>();
+			
+			msgs.add("You need to choose your next class first.");
+			msgs.add("Use " + ChatColor.YELLOW + "/chooseclass <class>" + ChatColor.RESET + " to choose your class.");
+			msgs.add("Use " + ChatColor.YELLOW + "/classes" + ChatColor.RESET + " to see all classes.");
+			
+			instance.getMessenger().sendMessages(command.sender, msgs, "Rank Summary");
 			return;
 		}
 		
@@ -1315,6 +1321,7 @@ public class CommandParser {
 				}
 				else {
 					msgs.add("You need to choose a class for your next rank.");
+					msgs.add("Use " + ChatColor.YELLOW + "/class" + ChatColor.RESET + " to see more information.");
 				}
 			}
 			else {
@@ -1339,10 +1346,9 @@ public class CommandParser {
 						}
 					}
 				}
-				
-				msgs.add("Use " + ChatColor.YELLOW + "/class" + ChatColor.RESET + " for more information.");
-				
-		
+
+				msgs.add("Use " + ChatColor.YELLOW + "/rank " + currRank.getName() + ChatColor.RESET + " for more information about your rank.");
+				msgs.add("Use " + ChatColor.YELLOW + "/class" + ChatColor.RESET + " for more information.");		
 			}
 		}
 		else {			
@@ -1357,7 +1363,11 @@ public class CommandParser {
 			
 			
 			msgs.add("Rank name: " + ChatColor.YELLOW + rank.getName());
-			msgs.add("Description: " + ChatColor.YELLOW + rank.getDescription());
+			
+			if(!rank.getDescription().isEmpty()) {
+				msgs.add("Description: " + ChatColor.YELLOW + rank.getDescription());
+			}
+			
 			msgs.add("Class: " + ChatColor.YELLOW + rank.getClassStr());
 			msgs.add("Main class only: " + ChatColor.YELLOW + rank.isMainClassOnly());
 			msgs.add("Requirements:");
@@ -1418,13 +1428,15 @@ public class CommandParser {
 			
 			for(Rank rank : ranks) {
 				if(rank.getDescription().isEmpty()) {
-					msgs.add("   - " + ChatColor.YELLOW + rank.getName() + ChatColor.RESET + " : " + rank.getClassStr());
+					msgs.add("   - " + rank.getClassStr() + " : " + ChatColor.YELLOW + rank.getName());
 				}
 				else {
-					msgs.add("   - " + ChatColor.YELLOW + rank.getName() + ChatColor.RESET + " : " + rank.getClassStr() + " : " + rank.getDescription());
+					msgs.add("   - " + ChatColor.YELLOW + rank.getClassStr() + ChatColor.RESET + " : " + rank.getName() + " : " + rank.getDescription());
 				}
 			}
 		}
+		
+		msgs.add("Use " + ChatColor.YELLOW + "/rank <rank name>" + ChatColor.RESET + " to see information about a rank.");
 		
 		instance.getMessenger().sendMessages(command.sender, msgs, "All Ranks ");
 	}
@@ -1471,6 +1483,7 @@ public class CommandParser {
 				}
 			}
 			
+			msgs.add("Use " + ChatColor.YELLOW + "/class " + currClass.getName() + ChatColor.RESET + " for more information about your class.");
 			msgs.add("Use " + ChatColor.YELLOW + "/classes" + ChatColor.RESET + " to see all classes.");
 		}
 		else {
@@ -1484,7 +1497,10 @@ public class CommandParser {
 			RankClass classObj = instance.getRankManager().getClass(classStr);
 			
 			msgs.add("Class name: " + ChatColor.YELLOW + classObj.getName());
-			msgs.add("Description: " + ChatColor.YELLOW + classObj.getDescription());		
+			
+			if(!classObj.getDescription().isEmpty()) {
+				msgs.add("Description: " + ChatColor.YELLOW + classObj.getDescription());		
+			}
 			
 			int numPlayers = 0;
 			RankManager manager = instance.getRankManager();
@@ -1500,8 +1516,10 @@ public class CommandParser {
 			}
 			
 			msgs.add("Total # of players in this class: " + ChatColor.YELLOW + numPlayers);
-			for(RankPlayer player : instance.getRankManager().getClassPlayers(classObj)) {
-				msgs.add("   - " + ChatColor.YELLOW + player.getName());
+			for(RankPlayer player : manager.getPlayers()) {
+				if(player.getCurrentClass().equals(classObj)) {
+					msgs.add("   - " + ChatColor.YELLOW + player.getName());
+				}
 			}
 		}
 		instance.getMessenger().sendMessages(command.sender, msgs, "Class Summary ");
@@ -1537,6 +1555,8 @@ public class CommandParser {
 				}
 			}
 		}
+		
+		msgs.add("Use " + ChatColor.YELLOW + "/class <class name>" + ChatColor.RESET + " to see information about a rank.");
 		
 		instance.getMessenger().sendMessages(command.sender, msgs, "All Classes ");
 	}
