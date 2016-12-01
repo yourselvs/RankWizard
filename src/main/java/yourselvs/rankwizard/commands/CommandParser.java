@@ -592,7 +592,7 @@ public class CommandParser {
 		boolean groupExists = false;
 		
 		for(String group : instance.getPerms().getGroups()) {
-			if(group.equals(groupName)) {
+			if(group.equalsIgnoreCase(groupName)) {
 				groupExists = true;
 			}
 		}
@@ -854,7 +854,7 @@ public class CommandParser {
 		boolean groupExists = false;
 		
 		for(String group : instance.getPerms().getGroups()) {
-			if(group.equals(groupName)) {
+			if(group.equalsIgnoreCase(groupName)) {
 				groupExists = true;
 			}
 		}
@@ -1191,7 +1191,7 @@ public class CommandParser {
 		RankClass nextClass = null;
 		
 		for(RankClass classObj : possibleClasses) {
-			if(classObj.getName().equals(classStr)) {
+			if(classObj.getName().equalsIgnoreCase(classStr)) {
 				nextClass = classObj;
 			}
 		}
@@ -1552,7 +1552,7 @@ public class CommandParser {
 	}
 	
 	private boolean isParsableBoolean(String input) {
-		return input.equals("true") || input.equals("false");
+		return input.equalsIgnoreCase("true") || input.equalsIgnoreCase("false");
 	}
 	
 	private boolean parseBoolean(String input) {

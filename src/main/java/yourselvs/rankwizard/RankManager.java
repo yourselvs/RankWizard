@@ -64,7 +64,7 @@ public class RankManager implements Serializable {
 	
 	public RankClass removeClass(String classStr) {
 		for(int i = 0; i < classes.size(); i++) {
-			if(classes.get(i).getName().equals(classStr)) {
+			if(classes.get(i).getName().equalsIgnoreCase(classStr)) {
 				RankClass classObj = classes.remove(i);
 				RankWizard.saveManager();
 				return classObj;
@@ -75,7 +75,7 @@ public class RankManager implements Serializable {
 	
 	public boolean doesClassExist(String classStr) {
 		for(RankClass classObj : classes) {
-			if(classObj.getName().equals(classStr)) {
+			if(classObj.getName().equalsIgnoreCase(classStr)) {
 				return true;
 			}
 		}
@@ -97,7 +97,7 @@ public class RankManager implements Serializable {
 	
 	public RankClass getDefaultClass() {
 		for(RankClass classObj : classes) {
-			if(classObj.getName().equals(defaultClass)) {
+			if(classObj.getName().equalsIgnoreCase(defaultClass)) {
 				return classObj;
 			}
 		}
@@ -107,7 +107,7 @@ public class RankManager implements Serializable {
 	
 	public RankClass getClass(String classStr) {
 		for(RankClass classObj : classes) {
-			if(classObj.getName().equals(classStr)) {
+			if(classObj.getName().equalsIgnoreCase(classStr)) {
 				return classObj;
 			}
 		}
@@ -141,7 +141,7 @@ public class RankManager implements Serializable {
 	
 	public boolean doesPlayerExist(String name) {
 		for(RankPlayer player : players) {
-			if(player.getName().equals(name)) {
+			if(player.getName().equalsIgnoreCase(name)) {
 				return true;
 			}
 		}
@@ -151,7 +151,7 @@ public class RankManager implements Serializable {
 	
 	public RankPlayer getRankPlayer(String name) {
 		for(RankPlayer player : players) {
-			if(player.getName().equals(name)) {
+			if(player.getName().equalsIgnoreCase(name)) {
 				return player;
 			}
 		}
@@ -185,7 +185,7 @@ public class RankManager implements Serializable {
 	
 	public RankPlayer resetPlayer(Player player) {
 		for(int i = 0; i < players.size(); i++) {
-			if(players.get(i).getName() == player.getName()) {
+			if(players.get(i).getName().equalsIgnoreCase(player.getName())) {
 				players.remove(i);
 				List<RankClass> classes = new ArrayList<RankClass>();
 				classes.add(instance.getRankManager().getDefaultClass());

@@ -27,7 +27,7 @@ public class RankClass implements Serializable {
 	
 	public Rank getRank(String str) {
 		for(Rank rank : ranks) {
-			if(rank.getName().equals(str)) {
+			if(rank.getName().equalsIgnoreCase(str)) {
 				return rank;
 			}
 		}
@@ -51,7 +51,7 @@ public class RankClass implements Serializable {
 			}
 			
 			for(int i = 0; i < notMainRanks.size() - 1; i++) {
-				if(notMainRanks.get(i).getName().equals(str)) {
+				if(notMainRanks.get(i).getName().equalsIgnoreCase(str)) {
 					index = i;
 				}
 			}
@@ -70,7 +70,7 @@ public class RankClass implements Serializable {
 			}
 			
 			for(int i = 0; i < ranks.size() - 1; i++) {
-				if(ranks.get(i).getName().equals(str)) {
+				if(ranks.get(i).getName().equalsIgnoreCase(str)) {
 					index = i;
 				}
 			}
@@ -105,7 +105,7 @@ public class RankClass implements Serializable {
 	
 	public Rank removeRank(String rank) {
 		for(int i = 0; i < ranks.size(); i++) {
-			if(ranks.get(i).getName().equals(rank)) {
+			if(ranks.get(i).getName().equalsIgnoreCase(rank)) {
 				Rank removedRank = ranks.remove(i);
 				RankWizard.saveManager();
 				return removedRank;
@@ -116,7 +116,7 @@ public class RankClass implements Serializable {
 	
 	public boolean doesRankExist(String str) {
 		for(Rank rank : ranks) {
-			if(rank.getName().equals(str)) {
+			if(rank.getName().equalsIgnoreCase(str)) {
 				return true;
 			}
 		}
@@ -127,7 +127,7 @@ public class RankClass implements Serializable {
 		int index = 0;
 		
 		for(int i = 0; i < ranks.size(); i++) {
-			if(ranks.get(i).getName().equals(str)) {
+			if(ranks.get(i).getName().equalsIgnoreCase(str)) {
 				index = i;
 			}
 		}
@@ -143,6 +143,6 @@ public class RankClass implements Serializable {
 		
 		RankClass classObj = (RankClass) o;
 		
-		return classObj.name.equals(name);
+		return classObj.name.equalsIgnoreCase(name);
 	}
 }
