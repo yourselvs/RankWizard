@@ -1,11 +1,16 @@
 package yourselvs.rankwizard.commands;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
@@ -35,7 +40,75 @@ public class CommandParser {
 		case "ranks": parseRanks(command); break;
 		case "class": parseClass(command); break;
 		case "classes": parseClasses(command); break;
+		case "redeem": parseRedeem(command); break;
 		}
+	}
+	
+	private void parseRedeem(Cmd command) {
+		if(!(command.sender instanceof Player)) {
+			instance.getMessenger().sendMessage(command.sender, "You may not do this as a player.");
+			return;
+		}
+		
+		Player player = (Player) command.sender;
+		ItemStack relic = instance.getRelic();
+		ItemStack artifact = instance.getArtifact();
+		ItemStack playerHand = player.getInventory().getItemInMainHand();
+		
+		if(playerHand.equals(relic)) {
+			player.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
+			
+			int value = getRelicValue();
+			instance.getMessenger().sendMessage(player, "Your relic was valued at " + ChatColor.YELLOW + instance.getEcon().format(value));
+			try {
+				instance.getEcon().depositPlayer(player, value);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+			return;
+		}
+		if(playerHand.equals(artifact)) {
+			player.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
+			
+			int value = getArtifactValue();
+			instance.getMessenger().sendMessage(player, "Your artifact was valued at " + ChatColor.YELLOW + instance.getEcon().format(value));
+			try {
+				instance.getEcon().depositPlayer(player, value);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+			return;
+		}
+		
+		instance.getMessenger().sendMessage(player, "You must be holding only a single relic or artifact in your main hand to redeem.");
+	}
+	
+	private int getRelicValue() {
+		return getArtifactValue() * 5;
+	}
+	
+	private int getArtifactValue() {
+		Random rand = new Random(System.currentTimeMillis());
+		int value = rand.nextInt(100);
+		if(value < 20)
+			return 50;
+		if(value < 44)
+			return 75;
+		if(value < 59)
+			return 100;
+		if(value < 69)
+			return 140;
+		if(value < 79)
+			return 180;
+		if(value < 86)
+			return 230;
+		if(value < 91)
+			return 300;
+		if(value < 96)
+			return 400;
+		return 500;
 	}
 
 	private void parseRw(Cmd command) {		
@@ -44,25 +117,31 @@ public class CommandParser {
 			return;
 		}
 		
+		if(command.args[0].equalsIgnoreCase("help")) {parseRwHelp(command); return;}
+		
 		if(!command.sender.hasPermission("rankwizard.admin")) {
 			instance.getMessenger().sendMessage(command.sender, "You do not have permission to do this.");
 			return;
 		}
 		
-		switch(command.args[0]) {
-		case "reset": parseRwReset(command); break;
-		case "rank": parseRwRank(command); break;
-		case "class": parseRwClass(command); break;
-		case "defaultclass": parseRwDefaultclass(command); break;
-		case "help": parseRwHelp(command); break;
-		case "backup": parseRwBackup(command); break;
-		case "restore": parseRwRestore(command); break;
-		case "resetplayers": parseRwResetPlayers(command); break;
-		case "player": parseRwPlayer(command); break;
-		case "health": parseRwHealth(command); break;
-		case "repair": parseRwRepair(command); break;
-		default: parseInfo(command);
-		}
+		if(command.args[0].equalsIgnoreCase("restore")) {parseRwRestore(command); return;}
+		
+		RankWizard.backupManager(instance.getRankManager());
+		
+		if(command.args[0].equalsIgnoreCase("reset")) {parseRwReset(command); return;}
+		if(command.args[0].equalsIgnoreCase("rank")) {parseRwRank(command); return;}
+		if(command.args[0].equalsIgnoreCase("class")) {parseRwClass(command); return;}
+		if(command.args[0].equalsIgnoreCase("defaultclass")) {parseRwDefaultclass(command); return;}
+		if(command.args[0].equalsIgnoreCase("backup")) {parseRwBackup(command); return;}
+		if(command.args[0].equalsIgnoreCase("resetplayers")) {parseRwResetPlayers(command); return;}
+		if(command.args[0].equalsIgnoreCase("player")) {parseRwPlayer(command); return;}
+		if(command.args[0].equalsIgnoreCase("health")) {parseRwHealth(command); return;}
+		if(command.args[0].equalsIgnoreCase("repair")) {parseRwRepair(command); return;}
+		if(command.args[0].equalsIgnoreCase("relic")) {parseRwRelic(command); return;}
+		if(command.args[0].equalsIgnoreCase("artifact")) {parseRwArtifact(command); return;}
+		if(command.args[0].equalsIgnoreCase("drop")) {parseRwDrop(command); return;}
+
+		parseInfo(command);
 	}
 	
 	private void parseInfo(Cmd command) {
@@ -75,6 +154,36 @@ public class CommandParser {
 		instance.getMessenger().sendMessages(command.sender, msgs, "Plugin Information ");
 	}
 	
+	private void parseRwRelic(Cmd command) {
+		if(!(command.sender instanceof Player)) {
+			instance.getMessenger().sendMessage(command.sender, "You may not do this as a player.");
+			return;
+		}
+		
+		Player player = (Player) command.sender;
+		ItemStack playerHand = player.getInventory().getItemInMainHand();
+		
+		instance.setRelic(playerHand);
+		instance.getMessenger().sendMessage(player, "The server relic has been set to the item in your hand.");
+	}
+	
+	private void parseRwArtifact(Cmd command) {
+		if(!(command.sender instanceof Player)) {
+			instance.getMessenger().sendMessage(command.sender, "You may not do this as a player.");
+			return;
+		}
+		
+		Player player = (Player) command.sender;
+		ItemStack playerHand = player.getInventory().getItemInMainHand();
+		
+		instance.setArtifact(playerHand);
+		instance.getMessenger().sendMessage(player, "The server artifact has been set to the item in your hand.");
+	}
+	
+	private void parseRwDrop(Cmd command) {
+		instance.dropArtifacts();
+	}
+	
 	private void parseRwReset(Cmd command) {
 		instance.resetManager();
 		RankWizard.saveManager();
@@ -82,7 +191,6 @@ public class CommandParser {
 	}
 	
 	private void parseRwBackup(Cmd command) {
-		RankWizard.backupManager();
 		instance.getMessenger().sendServerMessage("RankWizard has been backed up.");
 	}
 	
@@ -1036,7 +1144,82 @@ public class CommandParser {
 	}
 	
 	private void parseRwHelp(Cmd command) {
-		// TODO
+		List<String> msgs = new ArrayList<String>();
+		List<String> commands = new ArrayList<String>();
+		List<String> descriptions = new ArrayList<String>();
+		
+		commands.add("rw help"); 
+		descriptions.add("List commands available to you through the RankWizard plugin.");
+		if(command.sender.hasPermission("rankwizard.general")) {
+			commands.add("rank"); 
+			descriptions.add("View information about your current rank.");
+			commands.add("rank <rank name>"); 
+			descriptions.add("View information about a specific rank.");
+			commands.add("ranks"); 
+			descriptions.add("List all possible ranks.");
+			commands.add("class"); 
+			descriptions.add("View information about your current class.");
+			commands.add("class <class name>"); 
+			descriptions.add("View information about a specific class.");
+			commands.add("classs"); 
+			descriptions.add("List all possible classs.");
+			commands.add("rankup"); 
+			descriptions.add("Rank up to the next rank in your class.");
+			commands.add("chooseclass <class>"); 
+			descriptions.add("Choose the class you want to rank up in next.");
+		}
+		if(command.sender.hasPermission("rankwizard.admin")) {
+			commands.add("rw rank create [rank] [class]"); 
+			descriptions.add("Create a rank in the specified class.");
+			commands.add("rw rank description [rank] [description]"); 
+			descriptions.add("Set the description of the specified rank.");
+			commands.add("rw rank mainclass [rank] [true/false]"); 
+			descriptions.add("Set whether or not a rank is main class only.");
+			commands.add("rw rank rename [rank] [new name]"); 
+			descriptions.add("Rename the specified rank to the new name.");
+			commands.add("rw rank requirement list [rank]"); 
+			descriptions.add("List requirements for the specified rank.");
+			commands.add("rw rank requirement add money [rank] [amount]"); 
+			descriptions.add("Add a money requirement to the specified rank.");
+			commands.add("rw rank requirement add group [rank] [pex group name]"); 
+			descriptions.add("Add a group requirement to the specified rank.");
+			commands.add("rw rank requirement remove money [rank]"); 
+			descriptions.add("Remove all money requirements from the specified rank.");
+			commands.add("rw rank requirement remove group [rank]"); 
+			descriptions.add("Remove all group requirements from the specified rank.");
+			commands.add("rw rank reward list"); 
+			descriptions.add("List rewards for the specified rank.");
+			commands.add("rw rank reward add money [rank] [amount]"); 
+			descriptions.add("Add a money reward to the specified rank.");
+			commands.add("rw rank reward add group [rank] [pex group name]"); 
+			descriptions.add("Add a group reward to the specified rank.");
+			commands.add("rw rank reward remove money [rank]"); 
+			descriptions.add("Remove all money rewards from the specified rank.");
+			commands.add("rw rank reward remove group [rank]"); 
+			descriptions.add("Remove all group rewards from the specified rank.");
+			commands.add("rw class create [class]"); 
+			descriptions.add("Create a class.");
+			commands.add("rw class description [class] [description]"); 
+			descriptions.add("Set the description of the specified class.");
+			commands.add("rw player reset [player]"); 
+			descriptions.add("Reset the rank of the specified player.");
+			commands.add("rw player list"); 
+			descriptions.add("List all players tracked by the plugin.");
+			commands.add("rw player view [player]"); 
+			descriptions.add("View information about the specified player.");
+			commands.add("rw defaultclass [class]"); 
+			descriptions.add("Set the default class to the specified class.");
+			commands.add("rw resetplayers"); 
+			descriptions.add("Reset all players tracked by the plugin.");
+			commands.add("rw restore"); 
+			descriptions.add("Restore the plugin to it's state before the most recent change.");
+		}
+		
+		for(int i = 0; i < commands.size(); i++) {
+			msgs.add(ChatColor.YELLOW + commands.get(i) + ChatColor.RESET + " : " + descriptions.get(i));
+		}
+		
+		instance.getMessenger().sendMessages(command.sender, msgs, "Available RankWizard Commands");
 	}
 	
 	private void parseRankup(Cmd command) {
@@ -1154,7 +1337,7 @@ public class CommandParser {
 			instance.getMessenger().sendMessage(command.sender, "You must include a class.");
 			return;
 		}
-		
+
 		RankPlayer rankPlayer = instance.getRankManager().getRankPlayer(player.getName());
 		
 		RankClass currClass = rankPlayer.getCurrentClass();
@@ -1207,8 +1390,6 @@ public class CommandParser {
 			return;
 		}
 		
-		rankPlayer.addClass(nextClass);
-		
 		nextRank = nextClass.getNextRank(null, inMainClass);
 		
 		boolean canRankUp = true;
@@ -1228,6 +1409,10 @@ public class CommandParser {
 		}
 		
 		if(canRankUp) {
+			rankPlayer.addClass(nextClass);
+			
+			
+			
 			List<RankAction> requirements = nextRank.getRequirements();
 			List<RankAction> rewards = nextRank.getRewards();
 			List<String> msgs = new ArrayList<String>();
@@ -1557,7 +1742,7 @@ public class CommandParser {
 			}
 		}
 		
-		msgs.add("Use " + ChatColor.YELLOW + "/class <class name>" + ChatColor.RESET + " to see information about a rank.");
+		msgs.add("Use " + ChatColor.YELLOW + "/class <class name>" + ChatColor.RESET + " to see information about a class.");
 		
 		instance.getMessenger().sendMessages(command.sender, msgs, "All Classes ");
 	}

@@ -7,10 +7,15 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
+import org.bukkit.event.entity.SlimeSplitEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -49,6 +54,8 @@ public class RankWizard extends JavaPlugin
 	
 	private Map<Integer, Double> repairVals;
 	
+	private ItemStack relic, artifact;
+	
 	@SuppressWarnings("unused")
 	private PlayerListener listener;
     
@@ -67,6 +74,9 @@ public class RankWizard extends JavaPlugin
     	repairVals.put(3, config.getDouble("tierThreeRepair"));
     	repairVals.put(4, config.getDouble("tierFourRepair"));
     	
+    	relic = config.getItemStack("relic");
+    	artifact = config.getItemStack("artifact");
+    	
     	formatter = new DateFormatter();
     	messenger = new Messenger(this, prefix, linkPrefix, ChatColor.YELLOW);
     	
@@ -78,6 +88,8 @@ public class RankWizard extends JavaPlugin
     	commandParser = new CommandParser(this);
     	
     	listener = new PlayerListener(this);
+    	
+    	startArtifactThread();
 	}
 	
 	public String getRankTreeLink() {return rankTreeLink;}
@@ -93,6 +105,21 @@ public class RankWizard extends JavaPlugin
 	public Economy getEcon() {return econ;}
 	
 	public Map<Integer, Double> getRepairVals() {return repairVals;}
+	
+	public ItemStack getRelic() {return relic;}
+	public ItemStack getArtifact() {return artifact;}
+	
+	public void setRelic(ItemStack relic) {
+		this.relic = relic;
+		getConfig().set("relic", relic);
+		this.saveConfig();
+	}
+	
+	public void setArtifact(ItemStack artifact) {
+		this.artifact = artifact;
+		getConfig().set("artifact", artifact);
+		this.saveConfig();
+	}
 	
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -136,8 +163,16 @@ public class RankWizard extends JavaPlugin
     	saveManager(fileName);
     }
     
-    public static void backupManager() {
-    	saveManager(backupFileName);
+    public static void backupManager(RankManager manager) {
+    	try {
+			FileOutputStream fileStream = new FileOutputStream(backupFileName);
+			ObjectOutputStream objectStream = new ObjectOutputStream(fileStream);
+			
+			objectStream.writeObject(manager);
+			objectStream.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
     }
     
     public void restoreManager() {
@@ -182,5 +217,61 @@ public class RankWizard extends JavaPlugin
     	t.setName("RankWizard Data Writer");
     	t.start();
     }
-
+    
+    public static void saveManager(String fileName, RankManager manager) {
+    	Thread t = new Thread(new Runnable() {
+	        public void run(){
+	        	synchronized(managerLock) {
+		        	try {
+		    			FileOutputStream fileStream = new FileOutputStream(fileName);
+		    			ObjectOutputStream objectStream = new ObjectOutputStream(fileStream);
+		    			
+		    			objectStream.writeObject(manager);
+		    			objectStream.close();
+		    		} catch (IOException e) {
+		    			e.printStackTrace();
+		    		}
+	        	}
+	        }
+	    });
+    	
+    	t.setName("RankWizard Data Writer");
+    	t.start();
+    }
+    
+    private void startArtifactThread() {
+    	Thread t = new Thread(new Runnable() {
+	        public void run(){
+	        	while(true) {
+	        		dropArtifacts();
+	        		
+	        		try {
+						Thread.sleep(600000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+	        	}
+	        }
+	    });
+    	
+    	t.setName("RankWizard Artifact Dropper");
+    	t.start();
+    }
+    
+    public void dropArtifacts() {
+    	if(artifact != null) {
+    		for(Player player : Bukkit.getOnlinePlayers()) {
+    			int firstEmpty = player.getInventory().firstEmpty();
+    			
+    			if(firstEmpty >= 0) {
+    				player.getInventory().setItem(firstEmpty, artifact);
+    			}
+    			else {
+    				messenger.sendMessage(player, "You could not receive an artifact because your inventory is full.");
+    			}
+    		}
+		}
+		
+		messenger.sendServerMessage("Artifacts have been dropped to all players! Artifacts drop again in 10 minutes. Use " + ChatColor.YELLOW + "/redeem" + ChatColor.RESET + " to redeem them to the server.");
+    }
 }

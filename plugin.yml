@@ -18,6 +18,8 @@ commands:
         description: Views current class.
     classes:
         description: Views all classes.
+    redeem:
+        description: Redeems either a relic or an artifact.
 permissions:
     rankwizard.admin:
         default: op
